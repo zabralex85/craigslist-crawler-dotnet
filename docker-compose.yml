@@ -1,0 +1,63 @@
+version: '3.4'
+
+services:
+  jaeger:
+    image: jaegertracing/all-in-one:1.26
+    container_name: craiglists-jaeger
+    ports:
+      - 16686:16686
+      - 6831:6831/udp
+    environment:
+      - COLLECTOR_ZIPKIN_HTTP_PORT=9411
+
+  rabbitmq:
+    image: rabbitmq:3.8.17-management
+    container_name: craiglists-rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=craigslist-user
+      - RABBITMQ_DEFAULT_PASS=craigslist-password
+
+  db:
+    image: mysql:8.0
+    container_name: craiglists-db
+    environment:
+      MYSQL_DATABASE: craiglists
+      MYSQL_USER: craigslist-user
+      MYSQL_PASSWORD: craigslist-password
+      MYSQL_ROOT_PASSWORD: craiglists-root-password
+    ports:
+      - 3306:3306
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - mysql_data:/var/lib/mysql
+
+  zabr.craiglists.crawler.consumer:
+    image: ${DOCKER_REGISTRY-}zabr-craiglists-crawler-consumer
+    build:
+      context: .
+      dockerfile: src/Zabr.Craiglists.Crawler.Consumer/Dockerfile
+    environment:
+      ConnectionStrings__DefaultConnection: Server=db; Port=3306; Database=craiglists; Uid=craigslist-user; Pwd=craigslist-password;
+      DbSettings__MigrationConnectionString: Server=db; Port=3306; Database=craiglists; Uid=craigslist-user; Pwd=craigslist-password;
+    depends_on:
+      - rabbitmq
+      - db
+      - jaeger
+
+  zabr.craiglists.crawler.producer:
+    image: ${DOCKER_REGISTRY-}zabr-craiglists-crawler-producer
+    build:
+      context: .
+      dockerfile: src/Zabr.Craiglists.Crawler.Producer/Dockerfile
+    depends_on:
+      - rabbitmq
+      - jaeger
+
+volumes:
+  mysql_data:
+  rabbitmq_data:

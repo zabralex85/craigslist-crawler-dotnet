@@ -1,0 +1,14 @@
+version: '3.4'
+
+services:
+  zabr.craiglists.crawler.consumer:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "80"
+
+  zabr.craiglists.crawler.producer:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "80"

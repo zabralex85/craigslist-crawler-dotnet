@@ -1,0 +1,3 @@
+-- CREATE DATABASE craiglists;
+-- CREATE USER 'craigslist-user'@'%' IDENTIFIED BY 'craigslist-password';
+-- GRANT ALL PRIVILEGES ON craiglists.* TO 'craigslist-user'@'%';

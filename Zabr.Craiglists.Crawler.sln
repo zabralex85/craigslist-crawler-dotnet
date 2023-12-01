@@ -1,0 +1,87 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34322.80
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zabr.Craiglists.Crawler.Consumer", "src\Zabr.Craiglists.Crawler.Consumer\Zabr.Craiglists.Crawler.Consumer.csproj", "{A67D9DDA-DBE9-4B02-9474-A2ECDA969F46}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zabr.Craiglists.Crawler.Producer", "src\Zabr.Craiglists.Crawler.Producer\Zabr.Craiglists.Crawler.Producer.csproj", "{FC9D91CE-9C7F-4199-9D1D-456FADDAA12D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{7FF20A76-3541-4E23-9B52-ED00D3515CE5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{E0941B84-8384-4D57-A5B0-F941B1B25EFD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zabr.Craiglists.Crawler.Producer.Tests", "tests\Zabr.Craiglists.Crawler.Producer.Tests\Zabr.Craiglists.Crawler.Producer.Tests.csproj", "{3F126964-6E6F-4172-8E6A-C14E21F48BCE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zabr.Craiglists.Crawler.Consumer.Tests", "tests\Zabr.Craiglists.Crawler.Consumer.Tests\Zabr.Craiglists.Crawler.Consumer.Tests.csproj", "{C30EAA0A-D4F7-418B-BFCD-F2E2CE1624C3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{0ACD2425-04B3-45B3-9C65-9D526B4C5F3E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Элементы решения", "Элементы решения", "{4CF9578A-0599-4677-8CB5-BE5DBD4E4A79}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zabr.Craiglists.Crawler.Common", "src\Zabr.Craiglists.Crawler.Common\Zabr.Craiglists.Crawler.Common.csproj", "{16DCA953-98AB-4E1E-B34F-A9FFF821CC35}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zabr.Craiglists.Crawler.Data", "src\Zabr.Craiglists.Crawler.Data\Zabr.Craiglists.Crawler.Data.csproj", "{9E250803-BAA4-4A09-9691-4EB0BF22E989}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{D97A4355-E602-4C04-A7F4-D11E1A6E3D1F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zabr.Craiglists.Crawler.Data.Migrator", "src\Zabr.Craiglists.Crawler.Data.Migrator\Zabr.Craiglists.Crawler.Data.Migrator.csproj", "{34EF1487-E43E-4AE7-A1E7-EA8C8D248B3F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A67D9DDA-DBE9-4B02-9474-A2ECDA969F46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A67D9DDA-DBE9-4B02-9474-A2ECDA969F46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A67D9DDA-DBE9-4B02-9474-A2ECDA969F46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A67D9DDA-DBE9-4B02-9474-A2ECDA969F46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC9D91CE-9C7F-4199-9D1D-456FADDAA12D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC9D91CE-9C7F-4199-9D1D-456FADDAA12D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC9D91CE-9C7F-4199-9D1D-456FADDAA12D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC9D91CE-9C7F-4199-9D1D-456FADDAA12D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F126964-6E6F-4172-8E6A-C14E21F48BCE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F126964-6E6F-4172-8E6A-C14E21F48BCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F126964-6E6F-4172-8E6A-C14E21F48BCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F126964-6E6F-4172-8E6A-C14E21F48BCE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C30EAA0A-D4F7-418B-BFCD-F2E2CE1624C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C30EAA0A-D4F7-418B-BFCD-F2E2CE1624C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C30EAA0A-D4F7-418B-BFCD-F2E2CE1624C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C30EAA0A-D4F7-418B-BFCD-F2E2CE1624C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{16DCA953-98AB-4E1E-B34F-A9FFF821CC35}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16DCA953-98AB-4E1E-B34F-A9FFF821CC35}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16DCA953-98AB-4E1E-B34F-A9FFF821CC35}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16DCA953-98AB-4E1E-B34F-A9FFF821CC35}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E250803-BAA4-4A09-9691-4EB0BF22E989}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E250803-BAA4-4A09-9691-4EB0BF22E989}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E250803-BAA4-4A09-9691-4EB0BF22E989}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E250803-BAA4-4A09-9691-4EB0BF22E989}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D97A4355-E602-4C04-A7F4-D11E1A6E3D1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D97A4355-E602-4C04-A7F4-D11E1A6E3D1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D97A4355-E602-4C04-A7F4-D11E1A6E3D1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D97A4355-E602-4C04-A7F4-D11E1A6E3D1F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34EF1487-E43E-4AE7-A1E7-EA8C8D248B3F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34EF1487-E43E-4AE7-A1E7-EA8C8D248B3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34EF1487-E43E-4AE7-A1E7-EA8C8D248B3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34EF1487-E43E-4AE7-A1E7-EA8C8D248B3F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A67D9DDA-DBE9-4B02-9474-A2ECDA969F46} = {7FF20A76-3541-4E23-9B52-ED00D3515CE5}
+		{FC9D91CE-9C7F-4199-9D1D-456FADDAA12D} = {7FF20A76-3541-4E23-9B52-ED00D3515CE5}
+		{3F126964-6E6F-4172-8E6A-C14E21F48BCE} = {E0941B84-8384-4D57-A5B0-F941B1B25EFD}
+		{C30EAA0A-D4F7-418B-BFCD-F2E2CE1624C3} = {E0941B84-8384-4D57-A5B0-F941B1B25EFD}
+		{16DCA953-98AB-4E1E-B34F-A9FFF821CC35} = {0ACD2425-04B3-45B3-9C65-9D526B4C5F3E}
+		{9E250803-BAA4-4A09-9691-4EB0BF22E989} = {0ACD2425-04B3-45B3-9C65-9D526B4C5F3E}
+		{34EF1487-E43E-4AE7-A1E7-EA8C8D248B3F} = {0ACD2425-04B3-45B3-9C65-9D526B4C5F3E}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F55A0A31-B7F5-4BF8-8C59-03784F7DA217}
+	EndGlobalSection
+EndGlobal
