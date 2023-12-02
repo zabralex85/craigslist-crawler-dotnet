@@ -1,0 +1,5 @@
+https://learn.microsoft.com/en-us/dotnet/standard/garbage-collection/implementing-disposeasync
+https://learn.microsoft.com/en-us/dotnet/api/system.iasyncdisposable?view=net-8.0&source=recommendations
+https://learn.microsoft.com/en-us/dotnet/api/system.idisposable?view=net-8.0
+https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.caching.memory?view=dotnet-plat-ext-8.0
+https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.caching.memory.imemorycache?view=dotnet-plat-ext-8.0&viewFallbackFrom=net-8.0

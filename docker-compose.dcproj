@@ -7,7 +7,7 @@
     <ProjectGuid>d97a4355-e602-4c04-a7f4-d11e1a6e3d1f</ProjectGuid>
     <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
     <DockerServiceUrl>{Scheme}://localhost:{ServicePort}/health</DockerServiceUrl>
-    <DockerServiceName>zabr.craiglists.crawler.consumer</DockerServiceName>
+    <DockerServiceName>zabr.crawler.consumer</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>
     <None Include="docker-compose.override.yml">
@@ -15,7 +15,5 @@
     </None>
     <None Include="docker-compose.yml" />
     <None Include=".dockerignore" />
-    <None Include="init.sql" />
-    <None Include="low-memory-my.cnf" />
   </ItemGroup>
 </Project>

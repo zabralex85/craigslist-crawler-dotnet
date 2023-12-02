@@ -4,13 +4,13 @@
       "commandName": "DockerCompose",
       "commandVersion": "1.0",
       "serviceActions": {
-        "zabr.craiglists.crawler.consumer": "StartDebugging",
+        "zabr.crawler.consumer": "StartDebugging",
         "check-consumers-started": "StartWithoutDebugging",
         "check-rabbit-started": "StartWithoutDebugging",
         "db": "StartWithoutDebugging",
         "jaeger": "StartWithoutDebugging",
         "rabbitmq": "StartWithoutDebugging",
-        "zabr.craiglists.crawler.producer": "StartDebugging"
+        "zabr.crawler.producer": "StartDebugging"
       }
     }
   }

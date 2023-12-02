@@ -10,7 +10,7 @@ services:
         soft: 26677
         hard: 46677      
     image: jaegertracing/all-in-one:1.26
-    container_name: craiglists-jaeger
+    container_name: scrapes-jaeger
     ports:
       - 16686:16686
       - 6831:6831/udp    
@@ -21,7 +21,7 @@ services:
     cpus: 1
     mem_limit: 300m
     image: rabbitmq:3.8.17-management
-    container_name: craiglists-rabbitmq
+    container_name: scrapes-rabbitmq
     ports:
       - 5672:5672
       - 15672:15672
@@ -45,17 +45,17 @@ services:
         soft: 26677
         hard: 46677
     image: mysql:8.0
-    container_name: craiglists-db
+    container_name: scrape-db
     environment:
-      MYSQL_DATABASE: craiglists
-      MYSQL_USER: craigslist-user
-      MYSQL_PASSWORD: craigslist-password
-      MYSQL_ROOT_PASSWORD: craiglists-root-password
+      MYSQL_DATABASE: scrapes
+      MYSQL_USER: scrape-user
+      MYSQL_PASSWORD: scrape-password
+      MYSQL_ROOT_PASSWORD: scrapes-root-password
     ports:
       - 3306:3306
     volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-      - ./low-memory-my.cnf:/etc/mysql/my.cnf
+      - ./.docker/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./.docker/low-memory-my.cnf:/etc/mysql/my.cnf
       - mysql_data:/var/lib/mysql
 
   # Wait for RabbitMQ to be joinable.
@@ -68,19 +68,19 @@ services:
   check-consumers-started: 
     image: jwilder/dockerize:0.6.1
     depends_on:
-      - zabr.craiglists.crawler.consumer
-    command: 'dockerize -wait=tcp://zabr.craiglists.crawler.consumer:80'
+      - zabr.crawler.consumer
+    command: 'dockerize -wait=tcp://zabr.crawler.consumer:80'
 
-  zabr.craiglists.crawler.consumer:
+  zabr.crawler.consumer:
     cpus: 0.5
     mem_limit: 100m
-    image: ${DOCKER_REGISTRY-}zabr-craiglists-crawler-consumer
+    image: ${DOCKER_REGISTRY-}zabr-crawler-consumer
     build:
       context: .
-      dockerfile: src/Zabr.Craiglists.Crawler.Consumer/Dockerfile
+      dockerfile: src/Zabr.Crawler.Consumer/Dockerfile
     environment:
-      ConnectionStrings__DefaultConnection: Server=db; Port=3306; Database=craiglists; Uid=craigslist-user; Pwd=craigslist-password;
-      DbSettings__MigrationConnectionString: Server=db; Port=3306; Database=craiglists; Uid=craigslist-user; Pwd=craigslist-password;
+      ConnectionStrings__DefaultConnection: Server=db; Port=3306; Database=scrapes; Uid=scrape-user; Pwd=scrape-password;
+      DbSettings__MigrationConnectionString: Server=db; Port=3306; Database=scrapes; Uid=scrape-user; Pwd=scrape-password;
       RabbitMq__Host: rabbitmq
       RabbitMq__Port: 5672
       RabbitMq__UserName: guest
@@ -98,13 +98,13 @@ services:
       - db
       - jaeger
 
-  zabr.craiglists.crawler.producer:
+  zabr.crawler.producer:
     cpus: 0.5
     mem_limit: 100m
-    image: ${DOCKER_REGISTRY-}zabr-craiglists-crawler-producer
+    image: ${DOCKER_REGISTRY-}zabr-crawler-producer
     build:
       context: .
-      dockerfile: src/Zabr.Craiglists.Crawler.Producer/Dockerfile
+      dockerfile: src/Zabr.Crawler.Producer/Dockerfile
     environment:
       RabbitMq__Host: rabbitmq
       RabbitMq__Port: 5672

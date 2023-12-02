@@ -1,13 +1,13 @@
 version: '3.8'
 
 services:
-  zabr.craiglists.crawler.consumer:
+  zabr.crawler.consumer:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     ports:
       - "80"
 
-  zabr.craiglists.crawler.producer:
+  zabr.crawler.producer:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     ports:
