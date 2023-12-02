@@ -30,6 +30,8 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-co
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zabr.Craiglists.Crawler.Data.Migrator", "src\Zabr.Craiglists.Crawler.Data.Migrator\Zabr.Craiglists.Crawler.Data.Migrator.csproj", "{34EF1487-E43E-4AE7-A1E7-EA8C8D248B3F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zabr.Craiglists.Crawler.RabbitMq", "src\Zabr.Craiglists.Crawler.RabbitMq\Zabr.Craiglists.Crawler.RabbitMq.csproj", "{9148964C-4D4F-446A-B49F-E826217F8829}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -68,6 +70,10 @@ Global
 		{34EF1487-E43E-4AE7-A1E7-EA8C8D248B3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{34EF1487-E43E-4AE7-A1E7-EA8C8D248B3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{34EF1487-E43E-4AE7-A1E7-EA8C8D248B3F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9148964C-4D4F-446A-B49F-E826217F8829}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9148964C-4D4F-446A-B49F-E826217F8829}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9148964C-4D4F-446A-B49F-E826217F8829}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9148964C-4D4F-446A-B49F-E826217F8829}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -80,6 +86,7 @@ Global
 		{16DCA953-98AB-4E1E-B34F-A9FFF821CC35} = {0ACD2425-04B3-45B3-9C65-9D526B4C5F3E}
 		{9E250803-BAA4-4A09-9691-4EB0BF22E989} = {0ACD2425-04B3-45B3-9C65-9D526B4C5F3E}
 		{34EF1487-E43E-4AE7-A1E7-EA8C8D248B3F} = {0ACD2425-04B3-45B3-9C65-9D526B4C5F3E}
+		{9148964C-4D4F-446A-B49F-E826217F8829} = {0ACD2425-04B3-45B3-9C65-9D526B4C5F3E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F55A0A31-B7F5-4BF8-8C59-03784F7DA217}

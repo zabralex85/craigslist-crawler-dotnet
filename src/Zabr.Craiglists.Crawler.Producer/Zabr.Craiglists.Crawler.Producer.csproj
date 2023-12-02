@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.54" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>
@@ -15,10 +16,13 @@
   <ItemGroup>
     <ProjectReference Include="..\Zabr.Craiglists.Crawler.Common\Zabr.Craiglists.Crawler.Common.csproj" />
     <ProjectReference Include="..\Zabr.Craiglists.Crawler.Data\Zabr.Craiglists.Crawler.Data.csproj" />
+    <ProjectReference Include="..\Zabr.Craiglists.Crawler.RabbitMq\Zabr.Craiglists.Crawler.RabbitMq.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Services\" />
+    <None Update="InitialPages.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

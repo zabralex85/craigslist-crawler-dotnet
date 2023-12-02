@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Zabr.Craiglists.Crawler.Consumer.Services;
 using Zabr.Craiglists.Crawler.Data;
 using Zabr.Craiglists.Crawler.Data.Health;
 using Zabr.Craiglists.Crawler.Data.Repositories;
+using Zabr.Craiglists.Crawler.RabbitMq.Extensions;
 
 namespace Zabr.Craiglists.Crawler.Consumer
 {
@@ -19,38 +21,60 @@ namespace Zabr.Craiglists.Crawler.Consumer
             configuration.AddJsonFile($"appsettings.{environment.EnvironmentName}.json", optional: true);
             configuration.AddEnvironmentVariables();
 
+            var dbConnectionString = configuration.GetConnectionString("DefaultConnection");
+            var rabbitMqConfig = configuration.GetSection("RabbitMq");
+
+            if (rabbitMqConfig == null)
+            {
+                throw new Exception("RabbitMq connection is null");
+            }
+
+            if (dbConnectionString == null)
+            {
+                throw new Exception("DB connection is null");
+            }
 
             //Add Logging
             builder.Services.AddLogging(x => x.AddConsole());
 
             // Add database context.
-            var connectionString = configuration.GetConnectionString("DefaultConnection");
-            if (connectionString != null)
+            builder.Services.AddDbContext<CraiglistsContext>(optionsBuilder =>
             {
-                builder.Services.AddDbContext<CraiglistsContext>(optionsBuilder =>
-                {
-                    optionsBuilder.UseMySQL(connectionString);
-                });
+                optionsBuilder.UseMySQL(dbConnectionString);
+            });
 
 #if DEBUG
-                if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
-                {
-                    await Data.Migrator.Program.Main(new string[]{});
-                }
-#endif
-                builder.Services.AddScoped<IPageRepository, PageRepository>();
-            }
-            else
+            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
             {
-
+                await Data.Migrator.Program.Main(new string[] { });
             }
+#endif
+            builder.Services.AddHttpClient("NoAutomaticCookies")
+                .ConfigurePrimaryHttpMessageHandler(() =>
+                    new HttpClientHandler
+                    {
+                        UseCookies = false
+                    });
+
+            builder.Services.AddScoped<IPageRepository, PageRepository>();
+            builder.Services.AddTransient<CraiglistsDirectoryService>();
+            
+            builder.Services.AddRabbitMqConsumer(rabbitMqConfig);
+            builder.Services.AddHostedService<ConsumerService>();
 
             var health = builder.Services.AddHealthChecks();
-            health.AddCheck<DbContextHealthCheck<CraiglistsContext>>("DatabaseCheck", HealthStatus.Unhealthy, timeout: TimeSpan.FromSeconds(1));
+
+            health.AddCheck<DbContextHealthCheck<CraiglistsContext>>(
+                name: "database",
+                failureStatus: HealthStatus.Unhealthy,
+                timeout: TimeSpan.FromSeconds(1),
+                tags: new string[] { "service" });
+
             
-            //builder.Services.AddControllers();
-            //builder.Services.AddEndpointsApiExplorer();
-            //builder.Services.AddSwaggerGen();
+            health.AddRabbitMQ($"amqp://{rabbitMqConfig["Username"]}:{rabbitMqConfig["Password"]}@{rabbitMqConfig["Host"]}:{rabbitMqConfig["Port"]}/{rabbitMqConfig["VirtualHost"]}",
+                name: "rabbitmq",
+                failureStatus: HealthStatus.Degraded,
+                tags: new string[] { "service" });
 
             var app = builder.Build();
 
@@ -63,25 +87,6 @@ namespace Zabr.Craiglists.Crawler.Consumer
                     [HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable
                 }
             });
-
-            //app.UseEndpoints(endpoints =>
-            //{
-            //    endpoints.MapDefaultControllerRoute();
-            //    endpoints.MapControllerRoute(
-            //        name: "Default",
-            //        pattern: "{controller=Home}/{action=Index}"
-            //    );
-            //});
-
-            // Configure the HTTP request pipeline.
-            //if (app.Environment.IsDevelopment())
-            //{
-            //    app.UseSwagger();
-            //    app.UseSwaggerUI();
-            //}
-
-            //app.UseAuthorization();
-            //app.MapControllers();
 
             app.Logger.LogInformation("Starting Application");
             await app.RunAsync();

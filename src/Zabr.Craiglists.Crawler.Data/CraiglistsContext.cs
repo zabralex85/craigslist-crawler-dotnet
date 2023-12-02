@@ -6,7 +6,7 @@ namespace Zabr.Craiglists.Crawler.Data
 {
     public class CraiglistsContext : DbContext
     {
-        public virtual DbSet<Page> Pages { get; set; }
+        public virtual DbSet<PageEntity> Pages { get; set; }
 
         public CraiglistsContext(DbContextOptions<CraiglistsContext> options) : base(options)
         {
@@ -34,7 +34,7 @@ namespace Zabr.Craiglists.Crawler.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Page>(entity =>
+            modelBuilder.Entity<PageEntity>(entity =>
             {
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Date).IsRequired();

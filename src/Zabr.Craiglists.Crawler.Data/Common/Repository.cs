@@ -24,6 +24,12 @@ namespace Zabr.Craiglists.Crawler.Data.Common
                 .SingleOrDefaultAsync(e => e.Id == id);
         }
 
+        public virtual void Add(TEntity entity)
+        {
+            DbContext.Set<TEntity>().Add(entity);
+            DbContext.SaveChanges();
+        }
+
         public virtual async Task AddAsync(TEntity entity)
         {
             await DbContext.Set<TEntity>().AddAsync(entity);

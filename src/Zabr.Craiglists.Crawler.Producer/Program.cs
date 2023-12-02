@@ -1,32 +1,52 @@
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Zabr.Craiglists.Crawler.Producer.Services;
+using Zabr.Craiglists.Crawler.RabbitMq.Extensions;
+
 namespace Zabr.Craiglists.Crawler.Producer
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            var configuration = builder.Configuration; // allows both to access and to set up the config
+            var environment = builder.Environment;
 
-            // Add services to the container.
-            builder.Services.AddLogging();
-            builder.Logging.AddConsole();
+            configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+            configuration.AddJsonFile($"appsettings.{environment.EnvironmentName}.json", optional: true);
+            configuration.AddEnvironmentVariables();
 
-            //builder.Services.AddControllers();
-            //builder.Services.AddEndpointsApiExplorer();
-            //builder.Services.AddSwaggerGen();
+            var rabbitMqConfig = configuration.GetSection("RabbitMq");
+            if (rabbitMqConfig == null)
+            {
+                throw new Exception("RabbitMq connection is null");
+            }
+
+            //Add Logging
+            builder.Services.AddLogging(x => x.AddConsole());
+
+            //builder.Services.Configure<RabbitMqOptions>(rabbitMqConfig);
+
+            builder.Services.AddRabbitMqProducer(rabbitMqConfig);
+            builder.Services.AddHostedService<WorkerService>();
+
+            var health = builder.Services.AddHealthChecks();
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
-            //if (app.Environment.IsDevelopment())
-            //{
-            //    app.UseSwagger();
-            //    app.UseSwaggerUI();
-            //}
+            app.MapHealthChecks("/health", new HealthCheckOptions
+            {
+                ResultStatusCodes =
+                {
+                    [HealthStatus.Healthy] = StatusCodes.Status200OK,
+                    [HealthStatus.Degraded] = StatusCodes.Status200OK,
+                    [HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable
+                }
+            });
 
-            //app.UseAuthorization();
-            //app.MapControllers();
-
-            app.Run();
+            app.Logger.LogInformation("Starting Application");
+            await app.RunAsync();
         }
     }
 }
