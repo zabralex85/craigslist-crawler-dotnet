@@ -3,8 +3,8 @@ using Zabr.Craiglists.Crawler.Common.Models.Base;
 
 namespace Zabr.Craiglists.Crawler.Common.Models.Crawler;
 
-public class Page : BasePage
+public abstract class Page : BasePage
 {
     [JsonPropertyName("LatLng")]
-    public LatLng LatLng { get; init; }
+    public LatLng LatLng { get; init; } = new LatLng(0, 0);
 }

@@ -6,8 +6,8 @@ namespace Zabr.Craiglists.Crawler.Common.Models.Crawler;
 public class DirectoryPage : BasePage
 {
     [JsonPropertyName("PageCount")]
-    public int PageCount { get; init; }
+    public int PageCount { get; init; } = 0;
 
     [JsonPropertyName("Pages")]
-    public List<Page> Pages { get; init; }
+    public List<Page> Pages { get; init; } = new List<Page>();
 }

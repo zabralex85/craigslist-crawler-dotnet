@@ -9,4 +9,10 @@ public class LatLng
 
     [JsonPropertyName("Longitude")]
     public string Longitude { get; init; }
+
+    public LatLng(float lat, float lon)
+    {
+        Latitude = lat.ToString("F");
+        Longitude = lon.ToString("F");
+    }
 }
