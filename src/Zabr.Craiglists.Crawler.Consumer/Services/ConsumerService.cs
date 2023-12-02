@@ -1,7 +1,6 @@
-using System.Text;
-using System.Text.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using Zabr.Craiglists.Crawler.Common.Extensions;
 using Zabr.Craiglists.Crawler.Common.Models.Rabbit;
 using Zabr.Craiglists.Crawler.Data.Entities;
 using Zabr.Craiglists.Crawler.Data.Repositories;
@@ -15,6 +14,7 @@ namespace Zabr.Craiglists.Crawler.Consumer.Services
         private readonly IServiceProvider _serviceProvider;
         private readonly CraiglistsDirectoryService _craiglistsDirectory;
         private readonly ILogger<ConsumerService> _logger;
+        private readonly EventHandler<BasicDeliverEventArgs> _handler;
 
         private IModel? _channel;
         private EventingBasicConsumer? _consumer;
@@ -31,6 +31,31 @@ namespace Zabr.Craiglists.Crawler.Consumer.Services
             _rabbitMqClientService = rabbitMqClientService;
             _serviceProvider = serviceProvider;
             _logger = logger;
+
+            _handler = async (sender, ea) =>
+            {
+                if (sender != null)
+                {
+                    await AsyncHanler(ea.Body.ToArray(), ea.DeliveryTag, CancellationToken.None);
+                }
+            };
+        }
+
+        private async Task AsyncHanler(byte[] body, ulong deliveryTag, CancellationToken stoppingToken)
+        {
+            var message = await body.GetObjectAsync<QueueItem>(stoppingToken);
+            if (message != null)
+            {
+                await HandleMessageAsync(message);
+            }
+            else
+            {
+                _logger.LogWarning("Message from queue is null");
+            }
+
+            _channel?.BasicAck(deliveryTag: deliveryTag, multiple: false);
+
+            await Task.CompletedTask;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -41,39 +66,31 @@ namespace Zabr.Craiglists.Crawler.Consumer.Services
         public override Task StartAsync(CancellationToken stoppingToken)
         {
             _channel = _rabbitMqClientService.GetChannel();
-            _channel.BasicQos(prefetchSize: 0, prefetchCount: 1, global: false);
+            if (_channel != null)
+            {
+                _channel.BasicQos(prefetchSize: 0, prefetchCount: 1, global: false);
 
-            _consumer = new EventingBasicConsumer(_channel);
-            _consumer.Received += OnReceived;
+                _consumer = new EventingBasicConsumer(_channel);
+                _consumer.Received += _handler;
 
-            _queue = _rabbitMqClientService.GetDefaultQueue();
-            _channel.BasicConsume(_consumer, _queue, autoAck: false);
+                _queue = _rabbitMqClientService.GetDefaultQueue();
+                _channel.BasicConsume(_consumer, _queue, autoAck: false);
+                
+            }
 
             return Task.CompletedTask;
         }
 
-        private void OnReceived(object? sender, BasicDeliverEventArgs ea)
+        private async Task OnReceived(object? sender, BasicDeliverEventArgs ea)
         {
-            var body = ea.Body.ToArray();
-            var message = JsonSerializer.Deserialize<QueueItem>(Encoding.UTF8.GetString(body), JsonSerializerOptions.Default);
-
-            if (message != null)
-            {
-                HandleMessage(message);
-            }
-            else
-            {
-                _logger.LogWarning("Message from queue is null");
-            }
-
-            _channel?.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
+            
         }
 
         public override Task StopAsync(CancellationToken stoppingToken)
         {
             if (_consumer != null)
             {
-                _consumer.Received -= OnReceived;
+                _consumer.Received -= _handler;
             }
 
             if (_channel != null)
@@ -88,17 +105,17 @@ namespace Zabr.Craiglists.Crawler.Consumer.Services
             return Task.CompletedTask;
         }
         
-        private void HandleMessage(QueueItem content)
-        {
-            _logger.LogInformation("Received: {Url}", content.Url);
+        //private void HandleMessage(QueueItem content)
+        //{
+        //    _logger.LogInformation("Received: {Url}", content.Url);
             
             
-            using (var scope = _serviceProvider.CreateScope())
-            {
-                var respository = (PageRepository)scope.ServiceProvider.GetRequiredService<IPageRepository>();
-                respository.Add(new PageEntity(content.Url, DateTime.UtcNow, "Content"));
-            }
-        }
+        //    using (var scope = _serviceProvider.CreateScope())
+        //    {
+        //        var respository = (PageRepository)scope.ServiceProvider.GetRequiredService<IPageRepository>();
+        //        respository.Add(new PageEntity(content.Url, DateTime.UtcNow, "Content"));
+        //    }
+        //}
 
         private async Task HandleMessageAsync(QueueItem content)
         {
@@ -107,7 +124,7 @@ namespace Zabr.Craiglists.Crawler.Consumer.Services
             using (var scope = _serviceProvider.CreateScope())
             {
                 var respository = (PageRepository)scope.ServiceProvider.GetRequiredService<IPageRepository>();
-                await respository.AddAsync(new PageEntity(content.Url, DateTime.UtcNow, "Content"));
+                await respository.AddIfNoExistsAsync(new PageEntity(content.Url, DateTime.UtcNow, "Content"));
             }
         }
     }

@@ -9,5 +9,14 @@ namespace Zabr.Craiglists.Crawler.Data.Repositories
             : base(context) 
         {
         }
+
+        public async Task AddIfNoExistsAsync(PageEntity entity)
+        {
+            var exists = await base.ExistAsync(x => x.Url == entity.Url);
+            if (!exists)
+            {
+                await base.AddAsync(entity);
+            }
+        }
     }
 }

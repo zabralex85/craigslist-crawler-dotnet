@@ -19,7 +19,7 @@ services:
 
   rabbitmq:
     cpus: 1
-    mem_limit: 128m
+    mem_limit: 300m
     image: rabbitmq:3.8.17-management
     container_name: craiglists-rabbitmq
     ports:

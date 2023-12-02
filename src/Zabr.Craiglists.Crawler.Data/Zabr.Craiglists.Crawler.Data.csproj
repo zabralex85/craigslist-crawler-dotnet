@@ -27,7 +27,10 @@
 
   <ItemGroup>
     <Folder Include="Interfaces\" />
-    <Folder Include="Migrations\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Zabr.Craiglists.Crawler.Common\Zabr.Craiglists.Crawler.Common.csproj" />
   </ItemGroup>
 
 </Project>

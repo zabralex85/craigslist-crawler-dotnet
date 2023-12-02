@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace Zabr.Craiglists.Crawler.Data.Common
 {
@@ -30,8 +31,7 @@ namespace Zabr.Craiglists.Crawler.Data.Common
             DbContext.SaveChanges();
         }
 
-        public virtual async Task AddAsync(TEntity entity)
-        {
+        public virtual async Task AddAsync(TEntity entity){
             await DbContext.Set<TEntity>().AddAsync(entity);
             await DbContext.SaveChangesAsync();
         }
@@ -39,16 +39,22 @@ namespace Zabr.Craiglists.Crawler.Data.Common
         public virtual async Task UpdateAsync(int id, TEntity entity)
         {
             DbContext.Set<TEntity>().Update(entity);
-
             await DbContext.SaveChangesAsync();
         }
 
         public virtual async Task DeleteAsync(int id)
         {
             var entity = await GetByIdAsync(id);
-            DbContext.Set<TEntity>().Remove(entity);
+            if (entity != null)
+            {
+                DbContext.Set<TEntity>().Remove(entity);
+                await DbContext.SaveChangesAsync();
+            }
+        }
 
-            await DbContext.SaveChangesAsync();
+        protected virtual async Task<bool> ExistAsync(Expression<Func<TEntity, bool>> predicate)
+        {
+            return await DbContext.Set<TEntity>().AnyAsync(predicate);
         }
     }
 }

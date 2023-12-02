@@ -4,9 +4,9 @@ namespace Zabr.Craiglists.Crawler.RabbitMq.Interfaces;
 
 public interface IRabbitMqClientService : IDisposable
 {
-    IModel GetChannel();
+    IModel? GetChannel();
 
-    string GetDefaultQueue();
+    string? GetDefaultQueue();
 
     void SendMessage(object obj, bool isPersistent = true);
 

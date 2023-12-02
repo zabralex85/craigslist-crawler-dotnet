@@ -39,8 +39,13 @@ namespace Zabr.Craiglists.Crawler.Data
             {
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Date).IsRequired();
-                entity.Property(e => e.Url).IsRequired();
                 entity.Property(e => e.Response).IsRequired();
+                entity.Property(e => e.Url)
+                    .HasColumnType("NVARCHAR")
+                    .HasMaxLength(250)
+                    .IsRequired();
+
+                entity.HasIndex(x => x.Url, "IX_URL").IsUnique();
             });
         }
     }
