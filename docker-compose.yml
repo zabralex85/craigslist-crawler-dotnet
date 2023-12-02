@@ -1,16 +1,25 @@
-version: '3.4'
+version: '3.8'
 
 services:
   jaeger:
+    cpus: 0.5
+    mem_limit: 100m
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 26677
+        hard: 46677      
     image: jaegertracing/all-in-one:1.26
     container_name: craiglists-jaeger
     ports:
       - 16686:16686
-      - 6831:6831/udp
+      - 6831:6831/udp    
     environment:
       - COLLECTOR_ZIPKIN_HTTP_PORT=9411
 
   rabbitmq:
+    cpus: 1
+    mem_limit: 128m
     image: rabbitmq:3.8.17-management
     container_name: craiglists-rabbitmq
     ports:
@@ -28,6 +37,13 @@ services:
       - RABBITMQ_DEFAULT_PASS=guest
 
   db:
+    cpus: 0.5
+    mem_limit: 300m
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 26677
+        hard: 46677
     image: mysql:8.0
     container_name: craiglists-db
     environment:
@@ -39,6 +55,7 @@ services:
       - 3306:3306
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./low-memory-my.cnf:/etc/mysql/my.cnf
       - mysql_data:/var/lib/mysql
 
   # Wait for RabbitMQ to be joinable.
@@ -55,6 +72,8 @@ services:
     command: 'dockerize -wait=tcp://zabr.craiglists.crawler.consumer:80'
 
   zabr.craiglists.crawler.consumer:
+    cpus: 0.5
+    mem_limit: 100m
     image: ${DOCKER_REGISTRY-}zabr-craiglists-crawler-consumer
     build:
       context: .
@@ -66,8 +85,9 @@ services:
       RabbitMq__Port: 5672
       RabbitMq__UserName: guest
       RabbitMq__Password: guest
-      RabbitMq__DefaultExchange: to-crawl
-      RabbitMq__DefaultQueue: to-crawl
+      RabbitMq__DefaultRoutingKey: RKE
+      RabbitMq__DefaultExchange: to-crawl-exchange
+      RabbitMq__DefaultQueue: to-crawl-queue
       RabbitMq__DefaultQueueIsDurable: true
       RabbitMq__DefaultQueueIsExclusive: false
       RabbitMq__DefaultQueueIsAutoDelete: false
@@ -79,6 +99,8 @@ services:
       - jaeger
 
   zabr.craiglists.crawler.producer:
+    cpus: 0.5
+    mem_limit: 100m
     image: ${DOCKER_REGISTRY-}zabr-craiglists-crawler-producer
     build:
       context: .
@@ -88,15 +110,16 @@ services:
       RabbitMq__Port: 5672
       RabbitMq__UserName: guest
       RabbitMq__Password: guest
-      RabbitMq__DefaultExchange: to-crawl
-      RabbitMq__DefaultQueue: to-crawl
+      RabbitMq__DefaultRoutingKey: RKE
+      RabbitMq__DefaultExchange: to-crawl-exchange
+      RabbitMq__DefaultQueue: to-crawl-queue
       RabbitMq__DefaultQueueIsDurable: true
       RabbitMq__DefaultQueueIsExclusive: false
       RabbitMq__DefaultQueueIsAutoDelete: false
     restart: on-failure
     depends_on:
       - check-rabbit-started
-      - check-consumers-started
+      #- check-consumers-started
       - rabbitmq
       - jaeger
 

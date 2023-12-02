@@ -1,6 +1,5 @@
 using System.Text;
 using System.Text.Json;
-using System.Threading.Channels;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using Zabr.Craiglists.Crawler.Common.Models.Rabbit;
@@ -17,6 +16,10 @@ namespace Zabr.Craiglists.Crawler.Consumer.Services
         private readonly CraiglistsDirectoryService _craiglistsDirectory;
         private readonly ILogger<ConsumerService> _logger;
 
+        private IModel? _channel;
+        private EventingBasicConsumer? _consumer;
+        private string? _queue;
+
         public ConsumerService(
             IRabbitMqClientService rabbitMqClientService,
             IServiceProvider serviceProvider,
@@ -30,58 +33,66 @@ namespace Zabr.Craiglists.Crawler.Consumer.Services
             _logger = logger;
         }
 
-        public override async Task StartAsync(CancellationToken stoppingToken)
-        {
-            //_channel = _rabbitMqClientService.GetChannel();
-            //_channel.BasicQos(prefetchSize: 0, prefetchCount: 1, global: false);
-
-            //_consumer = new EventingBasicConsumer(_channel);
-
-            //_consumer.Received += OnReceived;
-        }
-
-        public override async Task StopAsync(CancellationToken stoppingToken)
-        {
-            //_consumer.Received -= OnReceived;
-            //_consumer.Dispose();
-        }
-
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            stoppingToken.ThrowIfCancellationRequested();
-
-            var channel = _rabbitMqClientService.GetChannel();
-            channel.BasicQos(prefetchSize: 0, prefetchCount: 1, global: false);
-
-            var consumer = new EventingBasicConsumer(channel);
-
-            consumer.Received += (model, ea) =>
-            {
-                var body = ea.Body.ToArray();
-                var message = JsonSerializer.Deserialize<QueueItem>(Encoding.UTF8.GetString(body), JsonSerializerOptions.Default);
-
-                if (message != null)
-                {
-                    HandleMessage(message);
-                }
-                else
-                {
-                    _logger.LogWarning("Message from queue is null");
-                }
-
-                channel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
-            };
-
-            var queue = _rabbitMqClientService.GetDefaultQueue();
-            channel.BasicConsume(consumer, queue, autoAck: false);
-
             await Task.CompletedTask;
         }
 
+        public override Task StartAsync(CancellationToken stoppingToken)
+        {
+            _channel = _rabbitMqClientService.GetChannel();
+            _channel.BasicQos(prefetchSize: 0, prefetchCount: 1, global: false);
+
+            _consumer = new EventingBasicConsumer(_channel);
+            _consumer.Received += OnReceived;
+
+            _queue = _rabbitMqClientService.GetDefaultQueue();
+            _channel.BasicConsume(_consumer, _queue, autoAck: false);
+
+            return Task.CompletedTask;
+        }
+
+        private void OnReceived(object? sender, BasicDeliverEventArgs ea)
+        {
+            var body = ea.Body.ToArray();
+            var message = JsonSerializer.Deserialize<QueueItem>(Encoding.UTF8.GetString(body), JsonSerializerOptions.Default);
+
+            if (message != null)
+            {
+                HandleMessage(message);
+            }
+            else
+            {
+                _logger.LogWarning("Message from queue is null");
+            }
+
+            _channel?.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
+        }
+
+        public override Task StopAsync(CancellationToken stoppingToken)
+        {
+            if (_consumer != null)
+            {
+                _consumer.Received -= OnReceived;
+            }
+
+            if (_channel != null)
+            {
+                if (!_channel.IsClosed)
+                {
+                    _channel.Close();
+                }
+                _channel.Dispose();
+            }
+
+            return Task.CompletedTask;
+        }
+        
         private void HandleMessage(QueueItem content)
         {
             _logger.LogInformation("Received: {Url}", content.Url);
-
+            
+            
             using (var scope = _serviceProvider.CreateScope())
             {
                 var respository = (PageRepository)scope.ServiceProvider.GetRequiredService<IPageRepository>();

@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Zabr.Craiglists.Crawler.Data.Repositories;
 
 namespace Zabr.Craiglists.Crawler.Data.Health
 {
@@ -8,10 +10,12 @@ namespace Zabr.Craiglists.Crawler.Data.Health
         : IHealthCheck where TContext : DbContext
     {
         private readonly DbContext _dbContext = null!;
+        private readonly IServiceProvider _serviceProvider;
 
         // ReSharper disable once UnusedMember.Global
-        public DbContextHealthCheck(TContext dbContext)
+        public DbContextHealthCheck(TContext dbContext, IServiceProvider serviceProvider)
         {
+            _serviceProvider = serviceProvider;
             _dbContext = dbContext;
         }
 
@@ -26,8 +30,13 @@ namespace Zabr.Craiglists.Crawler.Data.Health
         {
             try
             {
-                await _dbContext.Database.CanConnectAsync(cancellationToken);
-                return HealthCheckResult.Healthy();
+                using (var scope = _serviceProvider.CreateScope())
+                {
+                    var respository = (PageRepository)scope.ServiceProvider.GetRequiredService<IPageRepository>();
+
+                    await _dbContext.Database.CanConnectAsync(cancellationToken);
+                    return HealthCheckResult.Healthy();
+                }
             }
             catch (Exception ex)
             {

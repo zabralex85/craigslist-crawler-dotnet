@@ -5,7 +5,7 @@ namespace Zabr.Craiglists.Crawler.Data.Common
     public abstract class Repository<TEntity>
         where TEntity : BaseEntity<int>
     {
-        protected readonly CraiglistsContext DbContext;
+        public readonly CraiglistsContext DbContext;
 
         protected Repository(CraiglistsContext context)
         {

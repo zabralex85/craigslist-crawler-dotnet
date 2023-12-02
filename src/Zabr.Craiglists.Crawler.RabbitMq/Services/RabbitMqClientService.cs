@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json;
+using System.Threading.Channels;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using Zabr.Craiglists.Crawler.RabbitMq.Interfaces;
@@ -20,6 +21,7 @@ namespace Zabr.Craiglists.Crawler.RabbitMq.Services
         private readonly bool _queueIsDurable;
         private readonly bool _queueIsExclusive;
         private readonly bool _queueIsAutoDelete;
+        private readonly string _routingKey;
 
         public RabbitMqClientService(IOptions<RabbitMqOptions> options)
         {
@@ -55,6 +57,7 @@ resetConnection:
 
             _exchange = options.Value.DefaultExchange;
             _queue = options.Value.DefaultQueue;
+            _routingKey = options.Value.DefaultRoutingKey;
             _queueIsDurable = options.Value.DefaultQueueIsDurable;
             _queueIsExclusive = options.Value.DefaultQueueIsExclusive;
             _queueIsAutoDelete = options.Value.DefaultQueueIsAutoDelete;
@@ -66,7 +69,12 @@ resetConnection:
                 autoDelete: false,
                 arguments: null);
 
-            _channel.QueueDeclare(_queue, durable: _queueIsDurable, exclusive: _queueIsExclusive, autoDelete: _queueIsAutoDelete, arguments: null);
+            _channel.QueueDeclare(
+                queue: _queue,
+                durable: _queueIsDurable,
+                exclusive: _queueIsExclusive,
+                autoDelete: _queueIsAutoDelete,
+                arguments: null);
         }
 
         public void SendMessage(object obj, bool isPersistent = true)
@@ -76,8 +84,9 @@ resetConnection:
 
             var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(obj));
 
-            _channel.BasicPublish(exchange: _exchange,
-                routingKey: _queue,
+            _channel.BasicPublish(
+                exchange: _exchange,
+                routingKey: _routingKey,
                 basicProperties: properties,
                 body: body);
         }

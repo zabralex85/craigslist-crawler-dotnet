@@ -37,11 +37,22 @@ namespace Zabr.Craiglists.Crawler.Consumer
             //Add Logging
             builder.Services.AddLogging(x => x.AddConsole());
 
+
             // Add database context.
+
+            //builder.Services.AddEntityFrameworkMySQL()
+            //    .AddDbContext<CraiglistsContext>((serviceProvider, options) =>
+            //    {
+            //        options.UseMySQL(dbConnectionString).UseInternalServiceProvider(serviceProvider);
+            //    });
+
             builder.Services.AddDbContext<CraiglistsContext>(optionsBuilder =>
             {
                 optionsBuilder.UseMySQL(dbConnectionString);
             });
+            
+            builder.Services.AddScoped<DbContext, CraiglistsContext>();
+            builder.Services.AddTransient<IPageRepository, PageRepository>();
 
 #if DEBUG
             if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
@@ -55,8 +66,7 @@ namespace Zabr.Craiglists.Crawler.Consumer
                     {
                         UseCookies = false
                     });
-
-            builder.Services.AddScoped<IPageRepository, PageRepository>();
+            
             builder.Services.AddTransient<CraiglistsDirectoryService>();
             
             builder.Services.AddRabbitMqConsumer(rabbitMqConfig);
