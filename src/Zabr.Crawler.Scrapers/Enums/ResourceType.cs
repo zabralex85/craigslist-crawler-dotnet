@@ -1,10 +1,10 @@
 namespace Zabr.Crawler.Scrapers.Enums
 {
-    public enum ResourceType
+    public enum ResourceType : byte
     {
-        GenericHttp,
-        GenericJs,
-        LinkedIn,
-        Craigslist
+        GenericHttp = 1,
+        GenericJs = 2,
+        LinkedIn = 3,
+        Craigslist = 4
     }
 }

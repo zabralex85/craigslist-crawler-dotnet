@@ -3,7 +3,7 @@ using Zabr.Crawler.Scrapers.Models;
 
 namespace Zabr.Crawler.Scrapers.Mappings
 {
-    internal class ScrapingProfile : Profile
+    public class ScrapingProfile : Profile
     {
         public ScrapingProfile()
         {

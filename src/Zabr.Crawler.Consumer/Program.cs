@@ -6,8 +6,10 @@ using Zabr.Crawler.Data;
 using Zabr.Crawler.Data.Health;
 using Zabr.Crawler.Data.Repositories;
 using Zabr.Crawler.RabbitMq.Extensions;
-using Zabr.Crawler.Scrapers.Generic;
+using Zabr.Crawler.Scrapers;
+using Zabr.Crawler.Scrapers.Implementations;
 using Zabr.Crawler.Scrapers.Interfaces;
+using Zabr.Crawler.Scrapers.Mappings;
 
 namespace Zabr.Crawler.Consumer
 {
@@ -62,14 +64,18 @@ namespace Zabr.Crawler.Consumer
                         UseCookies = false
                     });
 
+            builder.Services.AddAutoMapper(typeof(ScrapingProfile));
+
             builder.Services.AddTransient<ICrawlerHttpService, CrawlerHttpService>();
+            builder.Services.AddTransient<ICrawlerJavaScriptService, CrawlerJavaScriptService>();
+            builder.Services.AddTransient<ICraigslistScraper, CraigslistScraper>();
+
+            builder.Services.AddSingleton<IScraperFactory, ScraperFactory>();
+            builder.Services.AddTransient<IScrapingService, ScrapingService>();
             
             builder.Services.AddRabbitMqConsumer(rabbitMqConfig);
             builder.Services.AddHostedService<ConsumerService>();
-
-            // AutoMapper
-            //builder.Services.AddAutoMapper(typeof(Startup));
-
+            
             var health = builder.Services.AddHealthChecks();
 
             health.AddCheck<DbContextHealthCheck<DataDbContext>>(

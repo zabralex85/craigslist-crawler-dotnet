@@ -1,9 +1,6 @@
-using Zabr.Crawler.Common.Models.Crawl;
-
 namespace Zabr.Crawler.Scrapers.Interfaces
 {
-    public interface ICrawlerHttpService
+    public interface ICrawlerHttpService : IScraper
     {
-        Task<RootPage> GetPageAsync(string url, CancellationToken token);
     }
 }

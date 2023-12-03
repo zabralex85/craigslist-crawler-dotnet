@@ -1,11 +1,13 @@
-using Microsoft.Playwright;
 using System.Text;
+using Microsoft.Playwright;
 using Zabr.Crawler.Common.Models.Crawl;
+using Zabr.Crawler.Scrapers.Enums;
 using Zabr.Crawler.Scrapers.Interfaces;
+using Zabr.Crawler.Scrapers.Models;
 
-namespace Zabr.Crawler.Scrapers.Generic
+namespace Zabr.Crawler.Scrapers.Implementations
 {
-    public class CrawlerJavaScriptService : ICrawlerJavaScriptService, IAsyncDisposable
+    public class CrawlerJavaScriptService : ICrawlerJavaScriptService, IAsyncDisposable, IScraper
     {
         private IPlaywright _playwright;
         private IBrowser _browser;
@@ -44,12 +46,19 @@ namespace Zabr.Crawler.Scrapers.Generic
             return page;
         }
 
-        public async Task<RootPage> GetPageAsync(string url, CancellationToken token)
+        public async Task<ScrapeResult[]> ScrapeAsync(ResourceType resourceType, string url, CancellationToken cancellationToken)
         {
             var response = await _page.GotoAsync(url).ConfigureAwait(false);
-            var page = await ParseContentAsync(url, response).ConfigureAwait(false);
+            var result = await ParseContentAsync(url, response).ConfigureAwait(false);
 
-            return page;
+            var page = new ScrapeResult
+            {
+                Id = Guid.NewGuid(),
+                Url = result.Url,
+                Content = result.Content
+            };
+
+            return new ScrapeResult[] { page };
         }
 
         public async ValueTask DisposeAsync()

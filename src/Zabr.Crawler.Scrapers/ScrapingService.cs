@@ -1,28 +1,38 @@
+using System.Text.RegularExpressions;
 using AutoMapper;
-using Microsoft.Extensions.DependencyInjection;
 using Zabr.Crawler.Scrapers.Enums;
 using Zabr.Crawler.Scrapers.Interfaces;
 using Zabr.Crawler.Scrapers.Models;
 
 namespace Zabr.Crawler.Scrapers
 {
-    public class ScrapingService
+    public class ScrapingService : IScrapingService
     {
-        private readonly IServiceProvider _serviceProvider;
+        private readonly IScraperFactory _scraperFactory;
         private readonly IMapper _mapper;
 
-        public ScrapingService(IServiceProvider serviceProvider, IMapper mapper)
+        public ScrapingService(IMapper mapper, IScraperFactory scraperFactory)
         {
-            _serviceProvider = serviceProvider;
             _mapper = mapper;
+            _scraperFactory = scraperFactory;
         }
 
-        public async Task<ScrapeResult> ScrapeResource(ResourceType resourceType)
+        public async Task<ScrapeResult[]> ScrapeResourceAsync(ResourceType resourceType, string url, CancellationToken token)
         {
-            var scraper = _serviceProvider.GetRequiredService<IScraper>();
-            var result = await scraper.ScrapeAsync(resourceType);
-            var mappedResult = _mapper.Map<ScrapeResult>(result);
+            var scraper = _scraperFactory.CreateScraper(resourceType);
+            var result = await scraper.ScrapeAsync(resourceType, url, token);
+            var mappedResult = _mapper.Map<ScrapeResult[]>(result);
             return mappedResult;
+        }
+
+        public ResourceType RecognizeResource(string contentUrl)
+        {
+            if (Regex.IsMatch(@"craigslist.org", contentUrl))
+            {
+                return ResourceType.Craigslist;
+            }
+
+            return ResourceType.GenericHttp;
         }
     }
 }

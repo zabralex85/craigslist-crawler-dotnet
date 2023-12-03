@@ -5,6 +5,6 @@ namespace Zabr.Crawler.Scrapers.Interfaces
 {
     public interface IScraper
     {
-        public Task<ScrapeResult> ScrapeAsync(ResourceType resourceType);
+        public Task<ScrapeResult[]> ScrapeAsync(ResourceType resourceType, string url, CancellationToken cancellationToken);
     }
 }

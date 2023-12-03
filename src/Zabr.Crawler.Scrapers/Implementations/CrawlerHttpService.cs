@@ -1,10 +1,12 @@
 using System.Text;
 using Zabr.Crawler.Common.Models.Crawl;
+using Zabr.Crawler.Scrapers.Enums;
 using Zabr.Crawler.Scrapers.Interfaces;
+using Zabr.Crawler.Scrapers.Models;
 
-namespace Zabr.Crawler.Scrapers.Generic
+namespace Zabr.Crawler.Scrapers.Implementations
 {
-    public class CrawlerHttpService : ICrawlerHttpService
+    public class CrawlerHttpService : ICrawlerHttpService, IScraper
     {
         private readonly IHttpClientFactory _httpClientFactory;
 
@@ -32,8 +34,8 @@ namespace Zabr.Crawler.Scrapers.Generic
 
             return page;
         }
-
-        public async Task<RootPage> GetPageAsync(string url, CancellationToken token)
+        
+        public async Task<ScrapeResult[]> ScrapeAsync(ResourceType resourceType, string url, CancellationToken token)
         {
             var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, url)
             {
@@ -53,7 +55,15 @@ namespace Zabr.Crawler.Scrapers.Generic
             await using var contentStream = await httpResponseMessage.Content.ReadAsStreamAsync(token);
             var page = await ParseContentAsync(url, contentStream);
 
-            return page;
+            return new ScrapeResult[]
+            {
+                new ScrapeResult
+                {
+                    Content = page.Content,
+                    Url = page.Url,
+                    Id = Guid.NewGuid()
+                }
+            };
         }
     }
 }

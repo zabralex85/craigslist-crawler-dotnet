@@ -2,10 +2,12 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using Zabr.Crawler.Common.Extensions;
 using Zabr.Crawler.Common.Models.Base;
+using Zabr.Crawler.Common.Models.Crawl;
 using Zabr.Crawler.Common.Models.Rabbit;
 using Zabr.Crawler.Data.Entities;
 using Zabr.Crawler.Data.Repositories;
 using Zabr.Crawler.RabbitMq.Interfaces;
+using Zabr.Crawler.Scrapers.Enums;
 using Zabr.Crawler.Scrapers.Interfaces;
 
 namespace Zabr.Crawler.Consumer.Services
@@ -14,7 +16,7 @@ namespace Zabr.Crawler.Consumer.Services
     {
         private readonly IRabbitMqClientService _rabbitMqClientService;
         private readonly IServiceProvider _serviceProvider;
-        private readonly ICrawlerHttpService _crawler;
+        private readonly IScrapingService _scrapingService;
         private readonly ILogger<ConsumerService> _logger;
         private readonly EventHandler<BasicDeliverEventArgs> _handler;
 
@@ -25,11 +27,11 @@ namespace Zabr.Crawler.Consumer.Services
         public ConsumerService(
             IRabbitMqClientService rabbitMqClientService,
             IServiceProvider serviceProvider,
-            ICrawlerHttpService crawler,
+            IScrapingService scrapingService,
             ILogger<ConsumerService> logger
         )
         {
-            _crawler = crawler;
+            _scrapingService = scrapingService;
             _rabbitMqClientService = rabbitMqClientService;
             _serviceProvider = serviceProvider;
             _logger = logger;
@@ -106,8 +108,20 @@ namespace Zabr.Crawler.Consumer.Services
         {
             _logger.LogInformation("Received: {Url}", content.Url);
 
-            var page = await _crawler.GetPageAsync(content.Url, token);
-            await SaveInDataBase(page);
+            var resurceType = _scrapingService.RecognizeResource(content.Url);
+            if (resurceType == ResourceType.GenericHttp)
+            {
+                var pages = await _scrapingService.ScrapeResourceAsync(ResourceType.GenericHttp, content.Url, token);
+
+                foreach (var page in pages)
+                {
+                    await SaveInDataBase(new RootPage
+                    {
+                        Url = page.Url,
+                        Content = page.Content
+                    });
+                }
+            }
         }
 
         private async Task SaveInDataBase(BasePage rootPage)
