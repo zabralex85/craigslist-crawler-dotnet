@@ -2,19 +2,18 @@ using System.Text;
 using Microsoft.Playwright;
 using Zabr.Crawler.Common.Models.Crawl;
 using Zabr.Crawler.Scrapers.Enums;
-using Zabr.Crawler.Scrapers.Interfaces;
 using Zabr.Crawler.Scrapers.Models;
 
-namespace Zabr.Crawler.Scrapers.Implementations
+namespace Zabr.Crawler.Scrapers.Implementations.GenericJavascript
 {
-    public class CrawlerJavaScriptService : ICrawlerJavaScriptService, IAsyncDisposable, IScraper
+    public class CrawlerJavaScriptScraper : ICrawlerJavaScriptScraper, IAsyncDisposable
     {
         private IPlaywright _playwright;
         private IBrowser _browser;
         private IBrowserContext _context;
         private IPage _page;
 
-        public CrawlerJavaScriptService()
+        public CrawlerJavaScriptScraper()
         {
             SetUpObjectsAsync().GetAwaiter().GetResult();
         }
@@ -34,7 +33,7 @@ namespace Zabr.Crawler.Scrapers.Implementations
                 Url = url,
                 PageCount = 0,
                 Pages = new List<InternalPage>(),
-                Content = String.Empty
+                Content = string.Empty
             };
 
             if (response != null)
@@ -67,7 +66,7 @@ namespace Zabr.Crawler.Scrapers.Implementations
             await _page.CloseAsync().ConfigureAwait(false);
             await _context.CloseAsync().ConfigureAwait(false);
             await _browser.CloseAsync().ConfigureAwait(false);
-            
+
             // Dispose of unmanaged resources.
             Dispose(false);
 

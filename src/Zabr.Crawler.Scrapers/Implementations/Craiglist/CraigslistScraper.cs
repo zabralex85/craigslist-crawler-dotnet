@@ -1,19 +1,19 @@
+using System.Text.RegularExpressions;
 using DotnetCraigslist;
 using Zabr.Crawler.Scrapers.Enums;
-using Zabr.Crawler.Scrapers.Interfaces;
 using Zabr.Crawler.Scrapers.Models;
 
-namespace Zabr.Crawler.Scrapers.Implementations
+namespace Zabr.Crawler.Scrapers.Implementations.Craiglist
 {
-    public class CraigslistScraper : ICraigslistScraper, IScraper
+    public class CraigslistScraper : ICraigslistScraper
     {
         public async Task<ScrapeResult[]> ScrapeAsync(ResourceType resourceType, string url, CancellationToken cancellationToken)
         {
+            string city = ExtractCityFromUrl(url);
+
             var client = new CraigslistClient();
 
-            var request = new SearchCommunityRequest(
-                "saltlakecity",
-                SearchCommunityRequest.Categories.MissedConnections)
+            var request = new SearchCommunityRequest(city, SearchCommunityRequest.Categories.MissedConnections)
             {
                 SearchDistance = 1050,
                 Sort = SearchRequest.SortOrder.Oldest
@@ -33,6 +33,11 @@ namespace Zabr.Crawler.Scrapers.Implementations
             }
 
             return results.ToArray();
+        }
+
+        private string ExtractCityFromUrl(string url)
+        {
+            return Regex.Match(url, @"https:\/\/(.*?)\.craigslist\.org").Value;
         }
     }
 }

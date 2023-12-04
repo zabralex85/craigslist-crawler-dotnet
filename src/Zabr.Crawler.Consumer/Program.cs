@@ -7,7 +7,9 @@ using Zabr.Crawler.Data.Health;
 using Zabr.Crawler.Data.Repositories;
 using Zabr.Crawler.RabbitMq.Extensions;
 using Zabr.Crawler.Scrapers;
-using Zabr.Crawler.Scrapers.Implementations;
+using Zabr.Crawler.Scrapers.Implementations.Craiglist;
+using Zabr.Crawler.Scrapers.Implementations.GenericHttp;
+using Zabr.Crawler.Scrapers.Implementations.GenericJavascript;
 using Zabr.Crawler.Scrapers.Interfaces;
 using Zabr.Crawler.Scrapers.Mappings;
 
@@ -57,6 +59,7 @@ namespace Zabr.Crawler.Consumer
                 await Data.Migrator.Program.Main(new string[] { });
             }
 #endif
+
             builder.Services.AddHttpClient("NoAutomaticCookies")
                 .ConfigurePrimaryHttpMessageHandler(() =>
                     new HttpClientHandler
@@ -66,8 +69,8 @@ namespace Zabr.Crawler.Consumer
 
             builder.Services.AddAutoMapper(typeof(ScrapingProfile));
 
-            builder.Services.AddTransient<ICrawlerHttpService, CrawlerHttpService>();
-            builder.Services.AddTransient<ICrawlerJavaScriptService, CrawlerJavaScriptService>();
+            builder.Services.AddTransient<ICrawlerHttpScraper, CrawlerHttpScraper>();
+            builder.Services.AddTransient<ICrawlerJavaScriptScraper, CrawlerJavaScriptScraper>();
             builder.Services.AddTransient<ICraigslistScraper, CraigslistScraper>();
 
             builder.Services.AddSingleton<IScraperFactory, ScraperFactory>();

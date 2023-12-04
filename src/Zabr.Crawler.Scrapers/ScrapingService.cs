@@ -27,7 +27,7 @@ namespace Zabr.Crawler.Scrapers
 
         public ResourceType RecognizeResource(string contentUrl)
         {
-            if (Regex.IsMatch(@"craigslist.org", contentUrl))
+            if (Regex.IsMatch(contentUrl, @"craigslist"))
             {
                 return ResourceType.Craigslist;
             }
