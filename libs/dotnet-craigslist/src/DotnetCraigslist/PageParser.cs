@@ -17,25 +17,6 @@ namespace DotnetCraigslist
     {
         public SearchResults ParseSearchResults(SearchRequest request, Stream content)
         {
-            /*
-             *<ol class="cl-static-search-results">
-               <li class="cl-static-hub-links">
-               <div>see also</div>
-               </li>
-               <li class="cl-static-search-result" title="Young Lady at Port charlotte Publix">
-               <a href="https://fortmyers.craigslist.org/chl/mis/d/port-charlotte-young-lady-at-port/7678361460.html">
-               <div class="title">Young Lady at Port charlotte Publix</div>
-               
-               <div class="details">
-               <div class="price">$0</div>
-               <div class="location">
-               Port charlotte
-               </div>
-               </div>
-               </a>
-               </li>
-             *
-             */
             var doc = new HtmlDocument();
             doc.Load(content);
             
@@ -77,6 +58,7 @@ namespace DotnetCraigslist
                 ?.SelectSingleNode(".//time")
                 ?.Attributes["datetime"]
                 ?.Value;
+
             var updatedDT = updated == default ? default(DateTime?) : DateTime.Parse(updated);
 
             var fullTitle = string.Join("", doc.DocumentNode
@@ -103,8 +85,8 @@ namespace DotnetCraigslist
                 .Where(t => !string.IsNullOrWhiteSpace(t));
             var description = string.Join(" ", descriptionParts);
 
-            var map = doc.DocumentNode
-                .SelectSingleNode("//div[@id='map']");
+            var map = doc.DocumentNode.SelectSingleNode("//div[@id='map']");
+
             var latitude =  map.Attributes["data-latitude"]?.Value;
             var longitude = map.Attributes["data-longitude"]?.Value;
             var accuracy = map.Attributes["data-accuracy"]?.Value;
@@ -163,7 +145,7 @@ namespace DotnetCraigslist
             var price = row.SelectSingleNode(".//div[@class='price']")?.InnerText;
             var hood = row.SelectSingleNode(".//span[contains(@class, 'result-hood')]")?.InnerText?.Trim(' ', '(', ')');
 
-            return new SearchResult(id, new Uri(url), dateTime, title)
+            return new SearchResult(id, new Uri(url ?? string.Empty), dateTime, title)
             {
                 Price = price,
                 Hood = hood,

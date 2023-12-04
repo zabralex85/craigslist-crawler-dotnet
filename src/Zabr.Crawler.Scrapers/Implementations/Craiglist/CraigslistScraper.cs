@@ -1,3 +1,5 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using DotnetCraigslist;
 using Zabr.Crawler.Scrapers.Enums;
@@ -22,18 +24,49 @@ namespace Zabr.Crawler.Scrapers.Implementations.Craiglist
             var results = new List<ScrapeResult>();
             var searchResults = await client.SearchAsync(request, cancellationToken);
 
-            foreach (var result in searchResults.Results)
+            // Split into batches and process each batch
+            var batches = searchResults.Results
+                .Select((result, index) => new { result, index })
+                .GroupBy(x => x.index / 5)
+                .Select(group => group.Select(x => x.result).ToList());
+
+            foreach (var batch in batches)
             {
-                var posting = await client.GetPostingAsync(new PostingRequest(result.PostingUrl.ToString()), cancellationToken);
-                results.Add(new ScrapeResult
-                {
-                    Id = Guid.NewGuid(),
-                    Url = result.PostingUrl.ToString(),
-                    Content = $"{posting.FullTitle} || {posting.Description}"
-                });
+                var tasks = batch.Select(result => client.GetPostingAsync(
+                    new PostingRequest(result.PostingUrl.ToString()), cancellationToken));
+
+                var postings = await Task.WhenAll(tasks);
+
+                results.AddRange(postings.Select(ScrapeResult));
+
+                // Optional delay to avoid rate limits
+                // await Task.Delay(1000);
             }
 
             return results.ToArray();
+        }
+
+        private static ScrapeResult ScrapeResult(Posting posting)
+        {
+            var result = new ScrapeResult
+            {
+                Id = Guid.NewGuid(),
+                Url = posting.PostingUrl.ToString()
+            };
+
+            var json = new
+            {
+                Id = posting.Id,
+                Price = posting.Price,
+                PostedOn = posting.PostedOn,
+                Location = posting.Location,
+                Title = posting.Title,
+                Description = posting.Description
+            };
+
+            result.Content = JsonSerializer.Serialize(json);
+
+            return result;
         }
 
         private string ExtractCityFromUrl(string url)
