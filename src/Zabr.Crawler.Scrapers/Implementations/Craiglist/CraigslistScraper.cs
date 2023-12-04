@@ -24,11 +24,12 @@ namespace Zabr.Crawler.Scrapers.Implementations.Craiglist
 
             foreach (var result in searchResults.Results)
             {
-                results.Add(new ScrapeResult()
+                var posting = await client.GetPostingAsync(new PostingRequest(result.PostingUrl.ToString()), cancellationToken);
+                results.Add(new ScrapeResult
                 {
                     Id = Guid.NewGuid(),
                     Url = result.PostingUrl.ToString(),
-                    Content = result.Hood,
+                    Content = $"{posting.FullTitle} || {posting.Description}"
                 });
             }
 
