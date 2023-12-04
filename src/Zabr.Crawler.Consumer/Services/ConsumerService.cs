@@ -109,18 +109,15 @@ namespace Zabr.Crawler.Consumer.Services
             _logger.LogInformation("Received: {Url}", content.Url);
 
             var resurceType = _scrapingService.RecognizeResource(content.Url);
-            if (resurceType == ResourceType.GenericHttp)
-            {
-                var pages = await _scrapingService.ScrapeResourceAsync(ResourceType.GenericHttp, content.Url, token);
+            var pages = await _scrapingService.ScrapeResourceAsync(resurceType, content.Url, token);
 
-                foreach (var page in pages)
+            foreach (var page in pages)
+            {
+                await SaveInDataBase(new RootPage
                 {
-                    await SaveInDataBase(new RootPage
-                    {
-                        Url = page.Url,
-                        Content = page.Content
-                    });
-                }
+                    Url = page.Url,
+                    Content = page.Content
+                });
             }
         }
 
