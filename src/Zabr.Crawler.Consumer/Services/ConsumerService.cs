@@ -7,7 +7,6 @@ using Zabr.Crawler.Common.Models.Rabbit;
 using Zabr.Crawler.Data.Entities;
 using Zabr.Crawler.Data.Repositories;
 using Zabr.Crawler.RabbitMq.Interfaces;
-using Zabr.Crawler.Scrapers.Enums;
 using Zabr.Crawler.Scrapers.Interfaces;
 
 namespace Zabr.Crawler.Consumer.Services

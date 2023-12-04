@@ -11,9 +11,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{7F
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{E0941B84-8384-4D57-A5B0-F941B1B25EFD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zabr.Crawler.Producer.Tests", "tests\Zabr.Crawler.Producer.Tests\Zabr.Crawler.Producer.Tests.csproj", "{3F126964-6E6F-4172-8E6A-C14E21F48BCE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zabr.Crawler.Producer.Tests", "tests\Zabr.Crawler.Producer.Tests\Zabr.Crawler.Producer.Tests.csproj", "{3F126964-6E6F-4172-8E6A-C14E21F48BCE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zabr.Crawler.Consumer.Tests", "tests\Zabr.Crawler.Consumer.Tests\Zabr.Crawler.Consumer.Tests.csproj", "{C30EAA0A-D4F7-418B-BFCD-F2E2CE1624C3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zabr.Crawler.Consumer.Tests", "tests\Zabr.Crawler.Consumer.Tests\Zabr.Crawler.Consumer.Tests.csproj", "{C30EAA0A-D4F7-418B-BFCD-F2E2CE1624C3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{0ACD2425-04B3-45B3-9C65-9D526B4C5F3E}"
 EndProject
@@ -32,15 +32,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zabr.Crawler.Data.Migrator"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zabr.Crawler.RabbitMq", "src\Zabr.Crawler.RabbitMq\Zabr.Crawler.RabbitMq.csproj", "{9148964C-4D4F-446A-B49F-E826217F8829}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zabr.Crawler.RabbitMq.Tests", "tests\Zabr.Crawler.RabbitMq.Tests\Zabr.Crawler.RabbitMq.Tests.csproj", "{380688AA-9BE8-4018-BD17-EACABB0F6529}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zabr.Crawler.RabbitMq.Tests", "tests\Zabr.Crawler.RabbitMq.Tests\Zabr.Crawler.RabbitMq.Tests.csproj", "{380688AA-9BE8-4018-BD17-EACABB0F6529}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zabr.Crawler.Data.Tests", "tests\Zabr.Crawler.Data.Tests\Zabr.Crawler.Data.Tests.csproj", "{64B569CE-AE28-4E93-B2D8-69D534ED71F1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zabr.Crawler.Data.Tests", "tests\Zabr.Crawler.Data.Tests\Zabr.Crawler.Data.Tests.csproj", "{64B569CE-AE28-4E93-B2D8-69D534ED71F1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zabr.Crawler.Scrapers", "src\Zabr.Crawler.Scrapers\Zabr.Crawler.Scrapers.csproj", "{2A314DC3-BD03-440B-8B36-6E840049D832}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zabr.Crawler.Scrapers.Tests", "tests\Zabr.Crawler.Scrapers.Tests\Zabr.Crawler.Scrapers.Tests.csproj", "{4BF52FE3-44CB-4AA0-9CCF-D7E082A33F2D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zabr.Crawler.Scrapers.Tests", "tests\Zabr.Crawler.Scrapers.Tests\Zabr.Crawler.Scrapers.Tests.csproj", "{4BF52FE3-44CB-4AA0-9CCF-D7E082A33F2D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zabr.Crawler.Common.Models", "src\Zabr.Crawler.Common.Models\Zabr.Crawler.Common.Models.csproj", "{DE69DE17-9981-4B70-82B8-D97C8B0DBB9A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zabr.Crawler.Common.Models", "src\Zabr.Crawler.Common.Models\Zabr.Crawler.Common.Models.csproj", "{DE69DE17-9981-4B70-82B8-D97C8B0DBB9A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "External", "External", "{E2677B1C-E310-4F44-BF00-015A58C832AE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotnetCraigslist", "libs\dotnet-craigslist\src\DotnetCraigslist\DotnetCraigslist.csproj", "{3BCE3DF6-4838-4728-8328-A74539300E77}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -104,6 +108,10 @@ Global
 		{DE69DE17-9981-4B70-82B8-D97C8B0DBB9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DE69DE17-9981-4B70-82B8-D97C8B0DBB9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DE69DE17-9981-4B70-82B8-D97C8B0DBB9A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3BCE3DF6-4838-4728-8328-A74539300E77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3BCE3DF6-4838-4728-8328-A74539300E77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3BCE3DF6-4838-4728-8328-A74539300E77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3BCE3DF6-4838-4728-8328-A74539300E77}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -122,6 +130,7 @@ Global
 		{2A314DC3-BD03-440B-8B36-6E840049D832} = {0ACD2425-04B3-45B3-9C65-9D526B4C5F3E}
 		{4BF52FE3-44CB-4AA0-9CCF-D7E082A33F2D} = {E0941B84-8384-4D57-A5B0-F941B1B25EFD}
 		{DE69DE17-9981-4B70-82B8-D97C8B0DBB9A} = {0ACD2425-04B3-45B3-9C65-9D526B4C5F3E}
+		{3BCE3DF6-4838-4728-8328-A74539300E77} = {E2677B1C-E310-4F44-BF00-015A58C832AE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F55A0A31-B7F5-4BF8-8C59-03784F7DA217}
