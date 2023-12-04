@@ -37,7 +37,10 @@ namespace Zabr.Crawler.Scrapers.Implementations.Craiglist
 
         private string ExtractCityFromUrl(string url)
         {
-            return Regex.Match(url, @"https:\/\/(.*?)\.craigslist\.org").Value;
+            var result = Regex.Match(url, @"https:\/\/(.*?)\.craigslist\.org").Value;
+            result = result.Replace("https://", "");
+            result = result.Replace(".craigslist.org", "");
+            return result;
         }
     }
 }
