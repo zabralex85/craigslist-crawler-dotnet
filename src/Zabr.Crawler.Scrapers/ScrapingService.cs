@@ -17,10 +17,14 @@ namespace Zabr.Crawler.Scrapers
             _scraperFactory = scraperFactory;
         }
 
-        public async Task<ScrapeResult[]> ScrapeResourceAsync(ResourceType resourceType, string url, CancellationToken token)
+        public async Task<ScrapeResult[]> ScrapeResourceAsync(
+            ResourceType resourceType,
+            string url,
+            HashSet<string>? processedPages,
+            CancellationToken token)
         {
             var scraper = _scraperFactory.CreateScraper(resourceType);
-            var result = await scraper.ScrapeAsync(resourceType, url, token);
+            var result = await scraper.ScrapeAsync(resourceType, url, processedPages, token);
             var mappedResult = _mapper.Map<ScrapeResult[]>(result);
             return mappedResult;
         }

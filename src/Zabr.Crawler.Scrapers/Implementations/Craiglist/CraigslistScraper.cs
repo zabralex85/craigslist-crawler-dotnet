@@ -1,5 +1,4 @@
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using DotnetCraigslist;
 using Zabr.Crawler.Scrapers.Enums;
@@ -9,7 +8,8 @@ namespace Zabr.Crawler.Scrapers.Implementations.Craiglist
 {
     public class CraigslistScraper : ICraigslistScraper
     {
-        public async Task<ScrapeResult[]> ScrapeAsync(ResourceType resourceType, string url, CancellationToken cancellationToken)
+        public async Task<ScrapeResult[]> ScrapeAsync(ResourceType resourceType, string url, HashSet<string>? processedPages,
+            CancellationToken cancellationToken)
         {
             string city = ExtractCityFromUrl(url);
 
@@ -26,14 +26,15 @@ namespace Zabr.Crawler.Scrapers.Implementations.Craiglist
 
             // Split into batches and process each batch
             var batches = searchResults.Results
+                .Where(x=> processedPages is null || !processedPages.Contains(x.PostingUrl.ToString()))
                 .Select((result, index) => new { result, index })
-                .GroupBy(x => x.index / 5)
+                .GroupBy(x => x.index / 4)
                 .Select(group => group.Select(x => x.result).ToList());
 
             foreach (var batch in batches)
             {
-                var tasks = batch.Select(result => client.GetPostingAsync(
-                    new PostingRequest(result.PostingUrl.ToString()), cancellationToken));
+                var tasks = batch.Select(result =>
+                    client.GetPostingAsync(new PostingRequest(result.PostingUrl.ToString()), cancellationToken));
 
                 var postings = await Task.WhenAll(tasks);
 

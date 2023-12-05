@@ -40,7 +40,11 @@ namespace Zabr.Crawler.Scrapers.Implementations.GenericHttp
             return page;
         }
 
-        public async Task<ScrapeResult[]> ScrapeAsync(ResourceType resourceType, string url, CancellationToken token)
+        public async Task<ScrapeResult[]> ScrapeAsync(
+            ResourceType resourceType,
+            string url,
+            HashSet<string>? processedPages,
+            CancellationToken token)
         {
             var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, url)
             {
@@ -55,9 +59,6 @@ namespace Zabr.Crawler.Scrapers.Implementations.GenericHttp
             var httpResponseMessage = await httpClient.SendAsync(httpRequestMessage, token);
 
             httpResponseMessage.EnsureSuccessStatusCode();
-
-            var contentLengthHeader = httpResponseMessage.Content.Headers.ContentLength;
-            var isChunked = httpResponseMessage.Headers.TransferEncodingChunked ?? false;
 
             var contentStream = await httpResponseMessage.Content.ReadAsStreamAsync(token);
             var page = await ParseContentAsync(url, contentStream);

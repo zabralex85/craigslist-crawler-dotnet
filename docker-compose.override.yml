@@ -1,14 +1,14 @@
 version: '3.8'
 
-services:
-  zabr.crawler.consumer:
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-    ports:
-      - "80"
+# services:
+  # zabr.crawler.consumer:
+  #   environment:
+  #     - ASPNETCORE_ENVIRONMENT=Development
+  #   ports:
+  #     - "80"
 
-  zabr.crawler.producer:
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-    ports:
-      - "80"
+  # zabr.crawler.producer:
+  #   environment:
+  #     - ASPNETCORE_ENVIRONMENT=Development
+  #   ports:
+  #     - "80"

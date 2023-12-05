@@ -26,7 +26,7 @@ namespace Zabr.Crawler.Scrapers.Implementations.GenericJavascript
             _page = await _context.NewPageAsync();
         }
 
-        private async Task<RootPage> ParseContentAsync(string url, IResponse? response)
+        private static async Task<RootPage> ParseContentAsync(string url, IResponse? response)
         {
             var page = new RootPage
             {
@@ -45,7 +45,11 @@ namespace Zabr.Crawler.Scrapers.Implementations.GenericJavascript
             return page;
         }
 
-        public async Task<ScrapeResult[]> ScrapeAsync(ResourceType resourceType, string url, CancellationToken cancellationToken)
+        public async Task<ScrapeResult[]> ScrapeAsync(
+            ResourceType resourceType,
+            string url,
+            HashSet<string>? processedPages,
+            CancellationToken cancellationToken)
         {
             var response = await _page.GotoAsync(url).ConfigureAwait(false);
             var result = await ParseContentAsync(url, response).ConfigureAwait(false);

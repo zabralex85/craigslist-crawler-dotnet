@@ -20,7 +20,7 @@ services:
   rabbitmq:
     cpus: 1
     mem_limit: 300m
-    image: rabbitmq:3.8.17-management
+    image: rabbitmq:3-management
     container_name: scrapes-rabbitmq
     ports:
       - 5672:5672
@@ -32,6 +32,7 @@ services:
       retries: 5
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
+      - ./.docker/rabbitmq-isolated.conf:/etc/rabbitmq/rabbitmq.config
     environment:
       - RABBITMQ_DEFAULT_USER=guest
       - RABBITMQ_DEFAULT_PASS=guest
@@ -58,70 +59,69 @@ services:
       - ./.docker/low-memory-my.cnf:/etc/mysql/my.cnf
       - mysql_data:/var/lib/mysql
 
-  # Wait for RabbitMQ to be joinable.
-  check-rabbit-started: 
-    image: jwilder/dockerize:0.6.1
-    depends_on:
-      - rabbitmq
-    command: 'dockerize -wait=tcp://rabbitmq:5672'
+  # check-rabbit-started: 
+  #   image: jwilder/dockerize:0.6.1
+  #   depends_on:
+  #     - rabbitmq
+  #   command: 'dockerize -wait=tcp://rabbitmq:5672'
 
-  check-consumers-started: 
-    image: jwilder/dockerize:0.6.1
-    depends_on:
-      - zabr.crawler.consumer
-    command: 'dockerize -wait=tcp://zabr.crawler.consumer:80'
+  # check-consumers-started: 
+  #   image: jwilder/dockerize:0.6.1
+  #   depends_on:
+  #     - zabr.crawler.consumer
+  #   command: 'dockerize -wait=tcp://zabr.crawler.consumer:80'
 
-  zabr.crawler.consumer:
-    cpus: 0.5
-    mem_limit: 100m
-    image: ${DOCKER_REGISTRY-}zabr-crawler-consumer
-    build:
-      context: .
-      dockerfile: src/Zabr.Crawler.Consumer/Dockerfile
-    environment:
-      ConnectionStrings__DefaultConnection: Server=db; Port=3306; Database=scrapes; Uid=scrape-user; Pwd=scrape-password;
-      DbSettings__MigrationConnectionString: Server=db; Port=3306; Database=scrapes; Uid=scrape-user; Pwd=scrape-password;
-      RabbitMq__Host: rabbitmq
-      RabbitMq__Port: 5672
-      RabbitMq__UserName: guest
-      RabbitMq__Password: guest
-      RabbitMq__DefaultRoutingKey: RKE
-      RabbitMq__DefaultExchange: to-crawl-exchange
-      RabbitMq__DefaultQueue: to-crawl-queue
-      RabbitMq__DefaultQueueIsDurable: true
-      RabbitMq__DefaultQueueIsExclusive: false
-      RabbitMq__DefaultQueueIsAutoDelete: false
-    restart: on-failure
-    depends_on:
-      - check-rabbit-started
-      - rabbitmq
-      - db
-      - jaeger
+  # zabr.crawler.consumer:
+  #   cpus: 0.5
+  #   mem_limit: 100m
+  #   image: ${DOCKER_REGISTRY-}zabr-crawler-consumer
+  #   build:
+  #     context: .
+  #     dockerfile: src/Zabr.Crawler.Consumer/Dockerfile
+  #   environment:
+  #     ConnectionStrings__DefaultConnection: Server=db; Port=3306; Database=scrapes; Uid=scrape-user; Pwd=scrape-password;
+  #     DbSettings__MigrationConnectionString: Server=db; Port=3306; Database=scrapes; Uid=scrape-user; Pwd=scrape-password;
+  #     RabbitMq__Host: rabbitmq
+  #     RabbitMq__Port: 5672
+  #     RabbitMq__UserName: guest
+  #     RabbitMq__Password: guest
+  #     RabbitMq__DefaultRoutingKey: RKE
+  #     RabbitMq__DefaultExchange: to-crawl-exchange
+  #     RabbitMq__DefaultQueue: to-crawl-queue
+  #     RabbitMq__DefaultQueueIsDurable: true
+  #     RabbitMq__DefaultQueueIsExclusive: false
+  #     RabbitMq__DefaultQueueIsAutoDelete: false
+  #   restart: on-failure
+  #   depends_on:
+  #     - check-rabbit-started
+  #     - rabbitmq
+  #     - db
+  #     - jaeger
 
-  zabr.crawler.producer:
-    cpus: 0.5
-    mem_limit: 100m
-    image: ${DOCKER_REGISTRY-}zabr-crawler-producer
-    build:
-      context: .
-      dockerfile: src/Zabr.Crawler.Producer/Dockerfile
-    environment:
-      RabbitMq__Host: rabbitmq
-      RabbitMq__Port: 5672
-      RabbitMq__UserName: guest
-      RabbitMq__Password: guest
-      RabbitMq__DefaultRoutingKey: RKE
-      RabbitMq__DefaultExchange: to-crawl-exchange
-      RabbitMq__DefaultQueue: to-crawl-queue
-      RabbitMq__DefaultQueueIsDurable: true
-      RabbitMq__DefaultQueueIsExclusive: false
-      RabbitMq__DefaultQueueIsAutoDelete: false
-    restart: on-failure
-    depends_on:
-      - check-rabbit-started
-      #- check-consumers-started
-      - rabbitmq
-      - jaeger
+  # zabr.crawler.producer:
+  #   cpus: 0.5
+  #   mem_limit: 100m
+  #   image: ${DOCKER_REGISTRY-}zabr-crawler-producer
+  #   build:
+  #     context: .
+  #     dockerfile: src/Zabr.Crawler.Producer/Dockerfile
+  #   environment:
+  #     RabbitMq__Host: rabbitmq
+  #     RabbitMq__Port: 5672
+  #     RabbitMq__UserName: guest
+  #     RabbitMq__Password: guest
+  #     RabbitMq__DefaultRoutingKey: RKE
+  #     RabbitMq__DefaultExchange: to-crawl-exchange
+  #     RabbitMq__DefaultQueue: to-crawl-queue
+  #     RabbitMq__DefaultQueueIsDurable: true
+  #     RabbitMq__DefaultQueueIsExclusive: false
+  #     RabbitMq__DefaultQueueIsAutoDelete: false
+  #   restart: on-failure
+  #   depends_on:
+  #     - check-rabbit-started
+  #     - check-consumers-started
+  #     - rabbitmq
+  #     - jaeger
 
 volumes:
   mysql_data:

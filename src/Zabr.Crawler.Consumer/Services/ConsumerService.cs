@@ -107,8 +107,20 @@ namespace Zabr.Crawler.Consumer.Services
         {
             _logger.LogInformation("Received: {Url}", content.Url);
 
+            HashSet<string>? processedPages = null;
+            
+            using (var scope = _serviceProvider.CreateScope())
+            {
+                var respository = (PageRepository)scope.ServiceProvider.GetRequiredService<IPageRepository>();
+                var data = await respository.GetAllUrls();
+                if (data != null)
+                {
+                    processedPages = new HashSet<string>(data);
+                }
+            }
+
             var resurceType = _scrapingService.RecognizeResource(content.Url);
-            var pages = await _scrapingService.ScrapeResourceAsync(resurceType, content.Url, token);
+            var pages = await _scrapingService.ScrapeResourceAsync(resurceType, content.Url, processedPages, token);
 
             foreach (var page in pages)
             {

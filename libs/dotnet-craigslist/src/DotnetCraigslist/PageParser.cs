@@ -87,12 +87,12 @@ namespace DotnetCraigslist
 
             var map = doc.DocumentNode.SelectSingleNode("//div[@id='map']");
 
-            var latitude =  map.Attributes["data-latitude"]?.Value;
-            var longitude = map.Attributes["data-longitude"]?.Value;
-            var accuracy = map.Attributes["data-accuracy"]?.Value;
+            var latitude =  map?.Attributes["data-latitude"]?.Value;
+            var longitude = map?.Attributes["data-longitude"]?.Value;
+            var accuracy = map?.Attributes["data-accuracy"]?.Value;
 
             GeoCoordinate? location = default;
-            if (latitude != default && longitude != default)
+            if (map != null && latitude != default && longitude != default)
             {
                 location = new GeoCoordinate
                 {
@@ -116,7 +116,7 @@ namespace DotnetCraigslist
                 FullTitle = fullTitle,
                 Title = title,
                 Price = price,
-                Description = description,
+                Description = description?.Replace("QR Code Link to This Post \n", ""),
                 Location = location,
                 AdditionalAttributes = attributes ?? Enumerable.Empty<string>(),
             };

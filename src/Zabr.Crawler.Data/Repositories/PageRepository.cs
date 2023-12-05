@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Zabr.Crawler.Data.Common;
 using Zabr.Crawler.Data.Entities;
 
@@ -17,6 +18,11 @@ namespace Zabr.Crawler.Data.Repositories
             {
                 await base.AddAsync(entity);
             }
+        }
+
+        public async Task<string[]?> GetAllUrls()
+        {
+            return await this.DbContext.Pages.Select(x => x.Url).ToArrayAsync();
         }
     }
 }

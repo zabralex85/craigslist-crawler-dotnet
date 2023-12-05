@@ -19,6 +19,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{0ACD24
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Элементы решения", "Элементы решения", "{4CF9578A-0599-4677-8CB5-BE5DBD4E4A79}"
 	ProjectSection(SolutionItems) = preProject
+		.docker\init.sql = .docker\init.sql
+		.docker\low-memory-my.cnf = .docker\low-memory-my.cnf
+		.docker\rabbitmq-isolated.conf = .docker\rabbitmq-isolated.conf
 		README.md = README.md
 	EndProjectSection
 EndProject
